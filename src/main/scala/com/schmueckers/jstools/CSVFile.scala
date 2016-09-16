@@ -22,7 +22,10 @@ import java.io.FileInputStream
   * val numbers = csv.map(values => values(2).toInt)
   * }}}
   * 
-  * This code is a snippet from [[https://labs.encoded.io/2012/04/09/reading-csv-files-in-scala-the-traversable-way]]
+  * This code is a snippet from [[https://labs.encoded.io/2012/04/09/reading-csv-files-in-scala-the-traversable-way]].
+  * 
+  * It's not the best way of actually doing this, but a good foundation I think. We need to think about csv-files
+  * that contain header rows.
   */
 class CSVFile(fileName: String,
               charset: String = "UTF-8", 
