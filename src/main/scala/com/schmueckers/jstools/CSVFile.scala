@@ -46,5 +46,12 @@ class CSVFile(fileName: String,
       csvReader.close()
     }
   }
+  
+  def toTable : Table[String,String] = {
+    this.toList match {
+      case h :: t => new Table[String,String] { def rows = t.map( _.toSeq.map( Some(_) ) ); def headers = h }
+      case Nil => new Table[String,String] { def rows = Seq.empty; def headers = Seq.empty }
+    }
+  }
 }
 

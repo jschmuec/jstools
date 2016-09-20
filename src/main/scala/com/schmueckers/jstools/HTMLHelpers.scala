@@ -2,7 +2,7 @@ package com.schmueckers.jstools
 
 /** Defines various stuff that makes working with HTML easier
   */
-package object HTMLHelpers {
+object HTMLHelpers {
   /**
    * Defines a method [[#toHtml]] that translates a table into an HTML table
    */
