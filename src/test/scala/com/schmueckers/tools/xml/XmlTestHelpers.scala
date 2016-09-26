@@ -1,11 +1,10 @@
 package com.schmueckers.tools.xml
 
-import org.scalatest.Matchers
+import org.scalatest._
+import matchers._
 import scala.xml.Node
-import org.scalatest.matchers.Matcher
 import scala.util.Try
 import org.scalactic.Fail
-import org.scalatest.matchers.MatchResult
 import scala.util.Failure
 import scala.util.Success
 
@@ -28,6 +27,26 @@ trait XmlTestHelpers extends Matchers {
     recurse(scala.xml.Utility.trim(actual), scala.xml.Utility.trim(expected))
   }
 }
+
+
+trait XmlMatchers extends XmlCompare {
+
+  class XmlMatcher(expected: Node) extends Matcher[Node] {
+
+    def apply(found : Node ) = {
+      val r = compare( expected, found ) 
+      MatchResult(
+        !r.isDefined,
+        r.getOrElse("Not needed").toString,
+        s"""${found} matched ${expected}"""
+      )
+    }
+  }
+
+  def beXml(expected : Node) = new XmlMatcher(expected)
+}
+
+object XmlMatchers extends XmlMatchers
 
 trait XmlCompare {
   def compare(expected: Node, actual: Node) : Option[Throwable] = {
