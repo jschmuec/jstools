@@ -5,6 +5,10 @@ import scala.collection.JavaConverters._
 import java.nio.file.Path
 import java.io.File
 
+/** This package contains some useful functions to working with files.
+  *
+  * Unfortunately, there is no really good way to test this automatically.
+  */
 package object files {
 
   /** Implicit conversion so that the Path logic isn't
