@@ -61,4 +61,15 @@ trait Table[H, V] {
     def headers: Seq[H] = outer.headers
     def rows: Seq[Seq[Option[V]]] = (outer.rows map rowToMap filter f) map (_.values.toSeq.map(Some(_)))
   }
+  
+  override def toString : String = {
+    def noneToNA( o : Option[V] ) : Any = o.getOrElse( "#N/A" )
+    val asList = headers :: rows.map( _.map( noneToNA ) ).toList
+    asList.map( _.toString ).mkString("\n")
+  }
 }
+
+/**
+ * A simple [[Seq]]-based implementaiton of [[Table]]
+ */
+class SeqTable[H,V]( val headers : Seq[H], val rows : Seq[Seq[Option[V]]] ) extends Table[H,V]
