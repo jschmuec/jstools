@@ -60,7 +60,7 @@ package object tools {
 
   /**
    * An implicit class extension that allows to transform [[scala.xml.Node]] through
-   * {{{#transform}}
+   * [[#transform]]
    */
   implicit class XmlTransformer(n: Node) {
     /**

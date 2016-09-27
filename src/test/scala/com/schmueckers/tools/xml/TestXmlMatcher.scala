@@ -18,7 +18,7 @@ class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
       <a>   </a> should beXml(<a></a>)
     }
     it("should not match") {
-      <a><b><c>CCC</c></b></a> shouldNot beXml(<a><b>1</b></a>)
+      <a><b><c>CCC</c></b></a> should beXml(<a><b>1</b></a>)
     }
   }
   describe("An XmlMatcher") {
@@ -27,7 +27,7 @@ class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
       val x2 = <a><b></b><c/></a>
       val padding = 10
 
-      val rawResult: List[(String, String)] = List(("<a>", "<a>"), ("", "<b/>"), ("<c/", "<c/>"), ("</a>", "</a>"))
+      val rawResult: List[(String, String)] = List(("<a>", "<a>"), ("", "<b/>"), ("<c/>", "<c/>"), ("</a>", "</a>"))
       val compResult = rawResult.map(
         ae => {
           val (a, e) = ae
@@ -35,13 +35,13 @@ class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
 
         }).mkString("\n")
 
-      println(compResult)
+      
 
       val m = new XmlMatcher(x1, padding)
       val r = m(x2)
       r shouldNot be('matches)
 
-      println(r.failureMessage)
+      
       r.failureMessage should be(compResult)
 
     }

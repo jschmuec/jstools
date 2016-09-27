@@ -43,14 +43,17 @@ trait XmlMatcher extends XmlCompare {
       val pretty_e = p.format(scala.xml.Utility.trim(expected)).split("\n")
       val pretty_a = p.format(scala.xml.Utility.trim(actual)).split("\n")
 
-      val z = pretty_e zipAll (pretty_a, "", "")
-
-      def check(z: List[(String, String)]): Boolean =
-        z match {
-          case Nil    => true
-          case h :: t => if (h._1 == h._2) check(t) else false
+      def diff( a : List[String], e : List[String] ) : List[(String,String)] = a match {
+        case Nil => a.zipAll(e,"","")
+        case h :: t => e.indexOf( h ) match {
+          case -1 => ( h, "" ) :: diff( t, e )
+          case 0 => ( h, e(0) ) :: diff( t, e.drop(1) )
+          case i => e.take(i).map( a => ("",a) ) ++ ( (h,e(i)) :: diff( t, e.drop(i+1) ) )
         }
-
+      }
+      
+      val z = diff( pretty_e.toList.map( _.trim ), pretty_a.toList.map( _.trim)  )
+      
       def combine(e_a: (String, String)): String = {
         val (e, a) = e_a
 
@@ -59,7 +62,7 @@ trait XmlMatcher extends XmlCompare {
       }
       
       MatchResult(
-        check(z.toList),
+        z.forall( ab => ab._1 == ab._2 ),
         z.map(combine).mkString("\n"),
         z.map(combine).mkString("\n"))
     }
