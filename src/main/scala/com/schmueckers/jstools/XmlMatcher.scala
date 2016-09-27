@@ -28,7 +28,7 @@ trait XmlTestHelpers extends Matchers {
   }
 }
 
-trait XmlMatchers extends XmlCompare {
+trait XmlMatcher extends XmlCompare {
 
   class XmlMatcher(expected: Node) extends Matcher[Node] {
 
@@ -68,7 +68,7 @@ trait XmlMatchers extends XmlCompare {
   def beXml(expected: Node) = new XmlMatcher(expected)
 }
 
-object XmlMatchers extends XmlMatchers
+object XmlMatcher extends XmlMatcher
 
 @deprecated("Just didnt' want to delete this code")
 trait XmlCompare {

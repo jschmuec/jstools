@@ -7,9 +7,8 @@ import scala.xml.Node
 import scala.xml.Elem
 import scala.xml.Text
 import com.schmueckers.tools._
-import com.schmueckers.tools.xml.XmlMatchers._
 
-class TestXmlMatcher extends FunSpec with Matchers {
+class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher {
   describe("The matcher") {
     it("shoudl work") {
 
