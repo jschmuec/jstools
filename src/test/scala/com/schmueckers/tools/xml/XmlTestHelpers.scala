@@ -28,28 +28,51 @@ trait XmlTestHelpers extends Matchers {
   }
 }
 
-
 trait XmlMatchers extends XmlCompare {
 
   class XmlMatcher(expected: Node) extends Matcher[Node] {
 
-    def apply(found : Node ) = {
-      val r = compare( expected, found ) 
+    /**
+     * A somewhat easy to read matcher for XML
+     * 
+     * It's not perfect yet as it doesn't show only the broken part of the XML
+     * in the display.
+     */
+    def apply(actual: Node) = {
+      val p = new scala.xml.PrettyPrinter(40, 2)
+      val pretty_e = p.format(scala.xml.Utility.trim(expected)).split("\n")
+      val pretty_a = p.format(scala.xml.Utility.trim(actual)).split("\n")
+
+      val z = pretty_e zipAll (pretty_a, "", "")
+
+      def check(z: List[(String, String)]): Boolean =
+        z match {
+          case Nil    => true
+          case h :: t => if (h._1 == h._2) check(t) else false
+        }
+
+      def combine(e_a: (String, String)): String = {
+        val (e, a) = e_a
+
+        val comp = if ( e == a ) "==" else "!="
+        f"$e%-40s $comp%s $a%s"
+      }
+      
       MatchResult(
-        !r.isDefined,
-        r.getOrElse("Not needed").toString,
-        s"""${found} matched ${expected}"""
-      )
+        check(z.toList),
+        z.map(combine).mkString("\n"),
+        z.map(combine).mkString("\n"))
     }
   }
 
-  def beXml(expected : Node) = new XmlMatcher(expected)
+  def beXml(expected: Node) = new XmlMatcher(expected)
 }
 
 object XmlMatchers extends XmlMatchers
 
+@deprecated("Just didnt' want to delete this code")
 trait XmlCompare {
-  def compare(expected: Node, actual: Node) : Option[Throwable] = {
+  def compare(expected: Node, actual: Node): Option[Throwable] = {
     case class MatchException(expected: Node, found: Node) extends Exception("not needed")
 
     def recurse(actual: xml.Node, expected: xml.Node) {
@@ -57,22 +80,23 @@ trait XmlCompare {
       for ((actualChild, expectedChild) <- actual.child zip expected.child) {
         recurse(actualChild, expectedChild)
       }
-      throw new MatchException(expected, actual)
+      if (expected != actual)
+        throw new MatchException(expected, actual)
     }
-    
+
     /* sorry just easier in procedure style */
-    if ( expected == actual ) 
+    if (expected == actual)
       return None
-    if ( expected == null || actual == null ) 
-      return Some(MatchException( expected, actual )) 
-      
+    if (expected == null || actual == null)
+      return Some(MatchException(expected, actual))
+
     Try {
       recurse(scala.xml.Utility.trim(actual), scala.xml.Utility.trim(expected))
     } match {
-      case Success( s ) => None
-      case Failure( f ) => Some(f)
+      case Success(s) => None
+      case Failure(f) => Some(f)
     }
   }
-  def compare( expected : Seq[Node], actual: Seq[Node] ) : Option[Throwable] = 
-    expected.zipAll( actual, null, null).flatMap( x => compare( x._1, x._2 ) ).headOption
+  def compare(expected: Seq[Node], actual: Seq[Node]): Option[Throwable] =
+    expected.zipAll(actual, null, null).flatMap(x => compare(x._1, x._2)).headOption
 }

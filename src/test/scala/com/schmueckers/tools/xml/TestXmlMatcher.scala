@@ -14,9 +14,10 @@ class TestXmlMatcher extends FunSpec with Matchers {
     it("shoudl work") {
 
       <a><b></b></a> should beXml(<a><b> </b></a>)
+      <a>   </a> should beXml(<a></a>)
     }
-    it("should fail") {
-      <a></a> shouldNot beXml(<a>1</a>)
+    it("should not match") {
+      <a><b><c>CCC</c></b></a> shouldNot beXml(<a><b>1</b></a>)
     }
   }
 }
