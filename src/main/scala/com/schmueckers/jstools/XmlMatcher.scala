@@ -8,26 +8,26 @@ import org.scalactic.Fail
 import scala.util.Failure
 import scala.util.Success
 
-trait XmlTestHelpers extends Matchers {
-  protected def assertEqual(actual: Seq[Node], expected: Seq[Node]) {
-    for {
-      (a, e) <- actual.zipAll(expected, null, null)
-    } assertEqual(a, e)
-  }
-
-  protected def assertEqual(actual: Node, expected: Node) {
-
-    def recurse(actual: xml.Node, expected: xml.Node) {
-      // depth-first checks, to get specific failures
-      for ((actualChild, expectedChild) <- actual.child zip expected.child) {
-        recurse(actualChild, expectedChild)
-      }
-      fail(s"Expected: ${expected} but received ${actual}")
-    }
-    recurse(scala.xml.Utility.trim(actual), scala.xml.Utility.trim(expected))
-  }
-}
-
+/**
+ * A Custom Matcher implementation for scalatest that allows easy comparison of XML.
+ * 
+ * Usage:
+ * 
+ * {{{
+ * class TestSometing with XmlMatcher {
+ * 	<a></a> should beXml(<a></a>)
+ * }
+ * }}}
+ * 
+ * or 
+ * {{{
+ * import com.schmueckers.tools.xml.XmlMatcher._
+ * 
+ * class TestSomething {
+ * 	<a></a> should beXml(<a></a>)
+ * }
+ * }}}
+ */
 trait XmlMatcher extends XmlCompare {
 
   class XmlMatcher(expected: Node) extends Matcher[Node] {
@@ -69,6 +69,28 @@ trait XmlMatcher extends XmlCompare {
 }
 
 object XmlMatcher extends XmlMatcher
+
+@deprecated("Didn't want to delete this")
+trait XmlTestHelpers extends Matchers {
+  protected def assertEqual(actual: Seq[Node], expected: Seq[Node]) {
+    for {
+      (a, e) <- actual.zipAll(expected, null, null)
+    } assertEqual(a, e)
+  }
+
+  protected def assertEqual(actual: Node, expected: Node) {
+
+    def recurse(actual: xml.Node, expected: xml.Node) {
+      // depth-first checks, to get specific failures
+      for ((actualChild, expectedChild) <- actual.child zip expected.child) {
+        recurse(actualChild, expectedChild)
+      }
+      fail(s"Expected: ${expected} but received ${actual}")
+    }
+    recurse(scala.xml.Utility.trim(actual), scala.xml.Utility.trim(expected))
+  }
+}
+
 
 @deprecated("Just didnt' want to delete this code")
 trait XmlCompare {
