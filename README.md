@@ -6,7 +6,7 @@ know if they should be contributed to some bigger projects and taken out of my h
 
 The packages pretty much explain what areas the functionality belongs to. Here are the highlights (if any):
 
-* XmlMatchers allows to match Xml in [ScalaTest](scalatest.org)
+* XmlMatchers allows to match Xml in [ScalaTest](scalatest.org) and get some useful output
 * CSVFile wraps Opencsv reader to be a little more functional
 * files implements a simple recursive find function for files
 * xml implements a transformer class that can be used to manipulate XML
