@@ -65,6 +65,12 @@ trait XmlMatcher extends XmlCompare {
     }
   }
 
+  /**
+   * The comparison method.
+   * 
+   * I couldn't figure out how to override the be method. Maybe somebody can
+   * explain this to me.
+   */
   def beXml(expected: Node) = new XmlMatcher(expected)
 }
 
