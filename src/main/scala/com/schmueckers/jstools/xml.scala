@@ -1,50 +1,30 @@
-package com.schmueckers
+package com.schmueckers.tools
 
 import scala.xml._
-
-/*
-implicit final class MLPipe[T](val x: T) extends AnyVal {
-  def |>[B](f: (T) => B) = f(x)
-}
-*/
-
-/*
- *  
- */
-/*
-object XmlTransformer {
-  type StatefullTransformer[S] = (S, Node) => (S, Seq[Node])
-  type StatelessTransformer = Node => Seq[Node]
-
-  def apply(t: (Node) => Seq[Node]) = (n: Node) =>
-    new SimpleTransformer(t).u(n)
-
-  implicit class XmlTransformations(ns: Seq[Node]) {
-    def transform[S](s: S)(t: (S, Node) => (S, Seq[Node])) =
-      new RuleTransformer2(t).use(s, ns)
-    def transform(t: (Node) => Seq[Node]) = new SimpleTransformer(t).use(Unit, ns)._2
-  }
-  implicit class XmlTransformation(n: Node) {
-    def transform[S](s: S)(t: StatefullTransformer[S]) = Seq(n).transform(s)(t)
-    def transform(t: StatelessTransformer) = Seq(n).transform(t)
-    def fold[S](s: S, f: (S, Node) => S) = {
-      def side_effect_only(s: S, n: Node): (S, Seq[Node]) = (f(s, n), Nil)
-      transform(s)(side_effect_only)
-    }
-  }
-}
-*/
 
 /**
  * Allows to fold and transform trees
  */
-
-package object tools {
+package object xml {
 
   /**
    * TreeTransformer allows to transform the nodes of a tree
    */
   object TreeTransformer {
+    /**
+     * Returns a function which applies a transformation function
+     * to the argument node and all it's child nodes
+     * 
+     * @param get_children a function which returns the children for a given node
+     * 
+     * @param the transformation function which will be applied to all nodes and
+     * childnodes. The transformed child nodes will be passed into this function, 
+     * thereby the transformation function can decide if the children should be 
+     * transformed or not.
+     * 
+     * @return a [[Seq]] of nodes that is the result of transforming the argument
+     * node and all the child nodes
+     */
     def apply[S, N](get_children: (N) => Seq[N],
                     transform: ((S, N, (S, Seq[N])) => (S, Seq[N]))) = {
       def f(state_nodes: (S, Seq[N]), n: N): (S, Seq[N]) = {
