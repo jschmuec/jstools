@@ -13,3 +13,7 @@ The packages pretty much explain what areas the functionality belongs to. Here a
 * Table implements a basic table and allows to export it into HMTL and filter it
 * CollectionTools just implement an implicit function for contains that checks if a tuple is contained
 in a Map
+
+As you can see it is a wild mix of stuff. 
+
+_Note_: This library references other libraries and might therefore come with license strings attached. The author does not grant any use and refer to this library or any dependent library.
