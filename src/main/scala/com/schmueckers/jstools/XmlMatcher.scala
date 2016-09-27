@@ -8,72 +8,71 @@ import org.scalactic.Fail
 import scala.util.Failure
 import scala.util.Success
 
-/**
- * A Custom Matcher implementation for scalatest that allows easy comparison of XML.
- * 
- * Usage:
- * 
- * {{{
- * class TestSometing with XmlMatcher {
- * 	<a></a> should beXml(<a></a>)
- * }
- * }}}
- * 
- * or 
- * {{{
- * import com.schmueckers.tools.xml.XmlMatcher._
- * 
- * class TestSomething {
- * 	<a></a> should beXml(<a></a>)
- * }
- * }}}
- */
+/** A Custom Matcher implementation for scalatest that allows easy comparison of XML.
+  *
+  * Usage:
+  *
+  * {{{
+  * class TestSometing with XmlMatcher {
+  * 	<a></a> should beXml(<a></a>)
+  * }
+  * }}}
+  *
+  * or
+  * {{{
+  * import com.schmueckers.tools.xml.XmlMatcher._
+  *
+  * class TestSomething {
+  * 	<a></a> should beXml(<a></a>)
+  * }
+  * }}}
+  */
 trait XmlMatcher extends XmlCompare {
 
-  class XmlMatcher(expected: Node, padding : Int = 40 ) extends Matcher[Node] {
+  class XmlMatcher(expected: Node, padding: Int = 40) extends Matcher[Node] {
 
-    /**
-     * A somewhat easy to read matcher for XML
-     * 
-     * It's not perfect yet as it doesn't show only the broken part of the XML
-     * in the display.
-     */
+    /** A somewhat easy to read matcher for XML
+      *
+      * After looking at libraries out there which did much smarter stuff I
+      * decided to implement a very simple diff algo on the XML in formatted form.
+      * The algo has O(N*N) if I'm not wrong, so don't run it on massive data
+      * sets.
+      */
     def apply(actual: Node) = {
       val p = new scala.xml.PrettyPrinter(padding, 2)
       val pretty_e = p.format(scala.xml.Utility.trim(expected)).split("\n")
       val pretty_a = p.format(scala.xml.Utility.trim(actual)).split("\n")
 
-      def diff( a : List[String], e : List[String] ) : List[(String,String)] = a match {
-        case Nil => a.zipAll(e,"","")
-        case h :: t => e.indexOf( h ) match {
-          case -1 => ( h, "" ) :: diff( t, e )
-          case 0 => ( h, e(0) ) :: diff( t, e.drop(1) )
-          case i => e.take(i).map( a => ("",a) ) ++ ( (h,e(i)) :: diff( t, e.drop(i+1) ) )
+      def diff(a: List[String], e: List[String]): List[(String, String)] = a match {
+        case Nil => a.zipAll(e, "", "")
+        case h :: t => e.indexOf(h) match {
+          case -1 => (h, "") :: diff(t, e)
+          case 0  => (h, e(0)) :: diff(t, e.drop(1))
+          case i  => e.take(i).map(a => ("", a)) ++ ((h, e(i)) :: diff(t, e.drop(i + 1)))
         }
       }
-      
-      val z = diff( pretty_e.toList.map( _.trim ), pretty_a.toList.map( _.trim)  )
-      
+
+      val z = diff(pretty_e.toList.map(_.trim), pretty_a.toList.map(_.trim))
+
       def combine(e_a: (String, String)): String = {
         val (e, a) = e_a
 
-        val comp = if ( e == a ) "==" else "!="
-        s"${e.padTo( padding, ' ')} ${comp} $a"
+        val comp = if (e == a) "==" else "!="
+        s"${e.padTo(padding, ' ')} ${comp} $a"
       }
-      
+
       MatchResult(
-        z.forall( ab => ab._1 == ab._2 ),
+        z.forall(ab => ab._1 == ab._2),
         z.map(combine).mkString("\n"),
         z.map(combine).mkString("\n"))
     }
   }
 
-  /**
-   * The comparison method.
-   * 
-   * I couldn't figure out how to override the be method. Maybe somebody can
-   * explain this to me.
-   */
+  /** The comparison method.
+    *
+    * I couldn't figure out how to override the be method. Maybe somebody can
+    * explain this to me.
+    */
   def beXml(expected: Node) = new XmlMatcher(expected)
 }
 
@@ -99,7 +98,6 @@ trait XmlTestHelpers extends Matchers {
     recurse(scala.xml.Utility.trim(actual), scala.xml.Utility.trim(expected))
   }
 }
-
 
 @deprecated("Just didnt' want to delete this code")
 trait XmlCompare {
