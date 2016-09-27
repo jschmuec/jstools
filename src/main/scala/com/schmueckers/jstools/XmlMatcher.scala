@@ -30,7 +30,7 @@ import scala.util.Success
  */
 trait XmlMatcher extends XmlCompare {
 
-  class XmlMatcher(expected: Node) extends Matcher[Node] {
+  class XmlMatcher(expected: Node, padding : Int = 40 ) extends Matcher[Node] {
 
     /**
      * A somewhat easy to read matcher for XML
@@ -39,7 +39,7 @@ trait XmlMatcher extends XmlCompare {
      * in the display.
      */
     def apply(actual: Node) = {
-      val p = new scala.xml.PrettyPrinter(40, 2)
+      val p = new scala.xml.PrettyPrinter(padding, 2)
       val pretty_e = p.format(scala.xml.Utility.trim(expected)).split("\n")
       val pretty_a = p.format(scala.xml.Utility.trim(actual)).split("\n")
 
@@ -55,7 +55,7 @@ trait XmlMatcher extends XmlCompare {
         val (e, a) = e_a
 
         val comp = if ( e == a ) "==" else "!="
-        f"$e%-40s $comp%s $a%s"
+        s"${e.padTo( padding, ' ')} ${comp} $a"
       }
       
       MatchResult(
