@@ -34,14 +34,25 @@ class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
           s"${a.padTo(padding, ' ')} ${if (a == e) "==" else "!="} $e"
 
         }).mkString("\n")
-        
+
       val m = new XmlMatcher(x1, padding)
       val r = m(x2)
       r shouldNot be('matches)
 
-      
       r.failureMessage should be(compResult)
 
+    }
+    it("should handle unparsed correctly") {
+      val x1 =
+        <td><a href="abc"/></td>
+
+      val x2 =
+        <td>
+          {scala.xml.Unparsed("<a href=\"abc\"/>")}
+        </td>
+      
+            
+      x1 should beXml(x2)
     }
   }
 }

@@ -39,9 +39,18 @@ trait XmlMatcher extends XmlCompare {
       * sets.
       */
     def apply(actual: Node) = {
+      /**
+       * Normalize the XML to remove Unparsed elements
+       */
+      def normalize( n : Node ) =
+        scala.xml.XML.loadString( n.buildString(false) )
+        
       val p = new scala.xml.PrettyPrinter(padding, 2)
-      val pretty_e = p.format(scala.xml.Utility.trim(expected)).split("\n")
-      val pretty_a = p.format(scala.xml.Utility.trim(actual)).split("\n")
+      val pretty_e = p.format(scala.xml.Utility.trim(normalize(expected))).split("\n")
+      val pretty_a = p.format(scala.xml.Utility.trim(normalize(actual))).split("\n")
+      println( pretty_e.toList)
+      println( pretty_a.toList)
+      
 
       def diff(a: List[String], e: List[String]): List[(String, String)] = a match {
         case Nil => a.zipAll(e, "", "")
