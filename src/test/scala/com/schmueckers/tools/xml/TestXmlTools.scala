@@ -9,10 +9,11 @@ import scala.xml.Text
 import com.schmueckers.tools._
 
 class TestXmlTools extends FunSpec with GivenWhenThen with Matchers with XmlCompare {
-  val doc = <a><b><a>1</a></b></a>
-  val id = (s: Int, n: Node) => (s, Seq(n))
 
   describe("NewTransformer") {
+    val doc = <a><b><a>1</a></b></a>
+    val id = (s: Int, n: Node) => (s, Seq(n))
+
     it("Should return an unchanged Seq[node] when use with the identity function") {
 
       Given("A simple Seq of xml node")
