@@ -43,12 +43,12 @@ package object xml {
       */
     def transform[S](transformer: (S, Node) => (S, Seq[Node]))(s: S) = {
       def compose(s: S, n: Node, cr: (S, Seq[Node])) = n match {
-        case t: Text => transformer(s, n)
         case Elem(prefix, label, attributes, scope, chs @ _*) => {
           val r = transformer(cr._1,
             Elem(n.prefix, n.label, n.attributes, n.scope, cr._2.isEmpty, cr._2: _*))
           r
         }
+        case default => transformer(s, n)
       }
       def get_children(n: Node) = n.child
 

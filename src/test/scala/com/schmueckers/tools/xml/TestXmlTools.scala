@@ -7,8 +7,9 @@ import scala.xml.Node
 import scala.xml.Elem
 import scala.xml.Text
 import com.schmueckers.tools._
+import scala.xml.Unparsed
 
-class TestXmlTools extends FunSpec with GivenWhenThen with Matchers with XmlCompare {
+class TestXmlTools extends FunSpec with GivenWhenThen with Matchers with XmlCompare with XmlMatcher {
 
   describe("NewTransformer") {
     val doc = <a><b><a>1</a></b></a>
@@ -56,6 +57,14 @@ class TestXmlTools extends FunSpec with GivenWhenThen with Matchers with XmlComp
       }
       val ret = doc.tmap(as_to_bs _)
       ret should be(Seq(<A><b><A>1</A></b></A>))
+    }
+    it("should Unparsed elements untouched") {
+      def dropBs( n : Node ) = n match {
+        case Elem( null, "b", attribs, scope, children @ _ * ) => List()
+        case default => default
+      }
+      val x = <a>{ new Unparsed("<b>hello world</b>") }<b>drop this</b></a>
+      x.tmap( dropBs ).head should beXml( <a><b>hello world</b></a> )
     }
   }
 }
