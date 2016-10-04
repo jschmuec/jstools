@@ -23,6 +23,12 @@ package object files {
   def find(dir: Path, includeHidden: Boolean = false): Iterator[Path] =
     java.nio.file.Files.walk(dir).iterator().asScala.filter(p => includeHidden || (!p.isHidden))
 
+    /**
+     * Finds files in the idr and returns the relative path to them.
+     * 
+     * Note: Operations like _.isRegularFile and other don't work on relative
+     * Paths!
+     */
   def findRelative(dir: Path): Iterator[Path] =
     find(dir).map(dir.relativize(_)) // drop the actual file
 
