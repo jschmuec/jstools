@@ -43,4 +43,10 @@ package object HTMLHelpers {
       v
     }
   }
+  
+  /**
+   * A small function that escapes & with &amp;
+   */
+  def html_escape_amp(s: String) =
+    "&(?!.{1,3};)".r.replaceAllIn(s, "&amp;")
 }
