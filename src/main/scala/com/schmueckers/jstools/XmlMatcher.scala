@@ -48,11 +48,8 @@ trait XmlMatcher extends XmlCompare {
       val p = new scala.xml.PrettyPrinter(padding, 2)
       val pretty_e = p.format(scala.xml.Utility.trim(normalize(expected))).split("\n")
       val pretty_a = p.format(scala.xml.Utility.trim(normalize(actual))).split("\n")
-      println( pretty_e.toList)
-      println( pretty_a.toList)
       
-
-      def diff(a: List[String], e: List[String]): List[(String, String)] = a match {
+         def diff(a: List[String], e: List[String]): List[(String, String)] = a match {
         case Nil => a.zipAll(e, "", "")
         case h :: t => e.indexOf(h) match {
           case -1 => (h, "") :: diff(t, e)
