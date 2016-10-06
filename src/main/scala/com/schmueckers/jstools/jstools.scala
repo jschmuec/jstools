@@ -11,7 +11,7 @@ package object jstools {
     * can't be called and many functions in scala are just methods.
     */
   implicit class Pipe[A](a: A) {
-    def |>[B](f: A => B) = f(a)
+    def |>[B,X>:A](f: X => B) = f(a) 
   }
 
   implicit def optionToTry[A]( o : Option[A] ) : Try[A] =o match {
