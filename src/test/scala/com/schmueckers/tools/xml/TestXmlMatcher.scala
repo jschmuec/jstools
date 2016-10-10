@@ -1,4 +1,4 @@
-package com.schmueckers.tools.xml
+package com.schmueckers.jstools.xml
 
 import org.scalatest.FunSpec
 import org.scalatest.GivenWhenThen
@@ -6,7 +6,6 @@ import org.scalatest.Matchers
 import scala.xml.Node
 import scala.xml.Elem
 import scala.xml.Text
-import com.schmueckers.tools._
 import org.scalatest.matchers.MatchResult
 import org.scalatest.Inside
 

@@ -1,4 +1,4 @@
-package com.schmueckers.tools.xml
+package com.schmueckers.jstools.xml
 
 import org.scalatest._
 import matchers._

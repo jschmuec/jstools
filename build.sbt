@@ -1,10 +1,12 @@
 name := "JS Tools"
 
-version := "0.2.2-SNAPSHOT"
+version := "0.4.0"
 
 organization := "com.schmueckers"
 
 scalaVersion := "2.11.8"
+
+scalacOptions += "-target:jvm-1.7"
 
 EclipseKeys.eclipseOutput := Some(".target")
 EclipseKeys.withSource := true

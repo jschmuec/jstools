@@ -1,4 +1,4 @@
-package com.schmueckers.tools
+package com.schmueckers.jstools
 
 import scala.xml._
 

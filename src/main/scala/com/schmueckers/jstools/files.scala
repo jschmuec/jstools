@@ -4,6 +4,9 @@ import java.nio.file.FileSystems
 import scala.collection.JavaConverters._
 import java.nio.file.Path
 import java.io.File
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.FileVisitResult
 
 /** This package contains some useful functions to working with files.
   *
@@ -20,16 +23,25 @@ package object files {
   /** Recursively goes through the directory and finds all files inside it
     * including directories
     */
-  def find(dir: Path, includeHidden: Boolean = false): Iterator[Path] =
-    java.nio.file.Files.walk(dir).iterator().asScala.filter(p => includeHidden || (!p.isHidden))
+  def find(dir: Path, includeHidden: Boolean = false): Traversable[Path] =
+    new FileTreeWalker( dir ).filter(p => includeHidden || (!p.isHidden))
 
-    /**
-     * Finds files in the idr and returns the relative path to them.
-     * 
-     * Note: Operations like _.isRegularFile and other don't work on relative
-     * Paths!
-     */
-  def findRelative(dir: Path): Iterator[Path] =
+  class FileTreeWalker(val path: Path) extends Traversable[Path] {
+    override def foreach[U](f: (Path) => U) {
+      java.nio.file.Files.walkFileTree(path, new SimpleFileVisitor[Path]() {
+        override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+          f(file)
+          FileVisitResult.CONTINUE
+        }
+      })
+    }
+  }
+  /** Finds files in the idr and returns the relative path to them.
+    *
+    * Note: Operations like _.isRegularFile and other don't work on relative
+    * Paths!
+    */
+  def findRelative(dir: Path): Traversable[Path] =
     find(dir).map(dir.relativize(_)) // drop the actual file
 
   /** Recursively goes through the directory and finds all the regular files. So

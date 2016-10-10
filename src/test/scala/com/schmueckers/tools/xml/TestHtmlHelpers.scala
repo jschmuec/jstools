@@ -1,10 +1,9 @@
-package com.schmueckers.tools.xml
+package com.schmueckers.jstools.xml
 
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
-import com.schmueckers.jstools.SeqTable
-import com.schmueckers._
-import jstools.HTMLHelpers._
+import com.schmueckers.jstools._
+import HTMLHelpers._
 
 class TestHtmlHelpers extends FunSpec with Matchers with XmlMatcher {
   describe("toHtml") {
