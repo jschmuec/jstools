@@ -1,14 +1,11 @@
 package com.schmueckers.jstools
 
-import com.schmueckers.jstools.Table
 import scala.collection.mutable.SetBuilder
-import scala.annotation.migration
-import scala.annotation.tailrec
 
 /**
  * A implementation of [[Table]] which takes a list of rows as constructor
  */
-class MapTable[K,V]( private val map_rows: Iterable[Map[K,V]] ) extends Table[K,V]{
+class MapTable[K,V]( val map_rows: Iterable[Map[K,V]] ) extends Table[K,V]{
   def row_to_seq( m : Map[K,V] ) : Seq[Option[V]] = 
     headers.map( m.get( _ ) )
     
