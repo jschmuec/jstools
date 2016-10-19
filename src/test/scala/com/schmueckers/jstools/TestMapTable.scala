@@ -4,14 +4,9 @@ import scala.xml.Null
 
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
-import com.schmueckers.jstools.Pipe
 
-import com.schmueckers.jstools.optionToTry
-import com.schmueckers.jstools.MapTable
-
-/**
- * Tests for [[MapTable]]
- */
+/** Tests for [[MapTable]]
+  */
 class TestMapTable extends FunSpec with Matchers {
   describe("MapTable") {
     val keys = Set("A", "B", "C")
@@ -38,5 +33,20 @@ class TestMapTable extends FunSpec with Matchers {
         (subset_maps(row_i).get(subset_table.headers(header_i)))
       }
     }
+    it(
+      """should return the fields of the row Maps in the same sequence as the
+          headers provided.""") {
+        val mp = new MapTable(subset_maps, "C", "A")
+        mp.headers should be(List("C", "A"))
+        for {
+          row_i <- 0 to subset_table.rows.size - 1
+          r = mp.rows(row_i)
+          map = subset_maps(row_i)
+          header_i <- 0 to 1
+          h = mp.headers(header_i)
+        } {
+          r(header_i) should be(map.get(h))
+        }
+      }
   }
 }
