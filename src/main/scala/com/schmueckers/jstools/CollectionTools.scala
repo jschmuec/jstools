@@ -11,4 +11,10 @@ object CollectionTools {
     def not[T](p: (T) => Boolean): (T) => Boolean = (t: T) => !p(t)
     def containsAll(s: Map[K, V]) = s.find(not(contains))
   }
+  implicit class ReverseIterable[A](iterable: Iterable[A]) {
+    def reverse: Iterable[A] =
+      iterable.foldLeft(List.empty[A]) {
+        case (l, e) => e :: l
+      }
+  }
 }
