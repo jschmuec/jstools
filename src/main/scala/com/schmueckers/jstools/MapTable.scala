@@ -12,7 +12,7 @@ class MapTable[K, V](val map_rows: Iterable[Map[K, V]], o_headers: Option[Seq[K]
   /** A constructor with a Seq that defines the headers. Convenience to make
     * creating MapTables with given headers easier.
     */
-  def this(map_rows: Iterable[Map[K, V]], headers: K*) = this(map_rows, headers match {
+  def this(map_rows: Iterable[Map[K, V]], headers: Seq[K]) = this(map_rows, headers match {
     case Nil     => None
     case headers => Some(headers)
   })

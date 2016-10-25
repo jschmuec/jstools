@@ -36,7 +36,7 @@ class TestMapTable extends FunSpec with Matchers {
     it(
       """should return the fields of the row Maps in the same sequence as the
           headers provided.""") {
-        val mp = new MapTable(subset_maps, "C", "A")
+        val mp = new MapTable(subset_maps, List("C", "A"))
         mp.headers should be(List("C", "A"))
         for {
           row_i <- 0 to subset_table.rows.size - 1
