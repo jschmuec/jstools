@@ -61,6 +61,13 @@ trait Table[H, V] {
     def headers: Seq[H] = outer.headers
     def rows: Seq[Seq[Option[V]]] = (outer.rows map rowToMap filter f) map (_.values.toSeq.map(Some(_)))
   }
+
+   def addColumn(header: H, values: Iterable[Option[V]]) =
+      new SeqTable(
+        headers :+ header,
+        rows zip values map (x => x._1 :+ x._2)
+      )
+ 
   
   override def toString : String = {
     def noneToNA( o : Option[V] ) : Any = o.getOrElse( "#N/A" )
