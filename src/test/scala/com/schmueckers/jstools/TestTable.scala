@@ -1,12 +1,11 @@
 package com.schmueckers.jstools
 
-import org.scalatest.FunSpec
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, FunSpec, GivenWhenThen}
 
 /**
  * Tests for [[MapTable]]
  */
-class TestTable extends FunSpec with Matchers {
+class TestTable extends FunSpec with Matchers with GivenWhenThen {
   describe("Table") {
     val keys = ('A' to 'C').toSeq
 
@@ -20,7 +19,35 @@ class TestTable extends FunSpec with Matchers {
 
     it("Should allow to add a column") {
       val table = new SeqTable(keys, generate_rows(keys, 0 to 10, join))
-      table.addColumn('D', generate_row("D", 11, join))
+      val newTable = table.addColumn('D', (0 to 10).map(i => Some(join('D', i))))
+
+      newTable.headers should be('A' to 'D')
+      val rows = newTable.rows
+      rows(0) should be(generate_row('A' to 'D', 0, join))
+    }
+    it("Should be able to add another table") {
+      val keys = 'A' to 'D'
+      val keys1 = keys.take(3)
+      val rows1 = generate_rows(keys1, 0 to 10, join)
+      val keys2 = keys.drop(1)
+      val rows2 = generate_rows(keys2, 11 to 20, join)
+
+      Given(s"A table with columns ${keys1}")
+      val table1 = new SeqTable(keys1, rows1)
+      Given(s"Another table with columns ${keys2}")
+      val table2 = new SeqTable(keys2, rows2)
+
+      When("Joining these tables")
+      val joined = table1 ++ table2
+
+      Then("The joined headers should be ${keys}")
+      joined.headers should be(keys)
+
+      Then("The first 3 columns of the first 11 rows of the joined table should be equal to the rows of the first table")
+      joined.rows.map(_.take(3)).take(11) should equal(rows1)
+
+      Then("The last 3 columns of the last 11 rows of the joined table should be equal to the rows of the second table")
+      joined.rows.map(_.drop(1)).drop(11) should equal(rows2)
     }
   }
 
