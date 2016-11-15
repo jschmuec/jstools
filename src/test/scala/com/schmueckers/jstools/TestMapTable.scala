@@ -1,7 +1,5 @@
 package com.schmueckers.jstools
 
-import scala.xml.Null
-
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
 

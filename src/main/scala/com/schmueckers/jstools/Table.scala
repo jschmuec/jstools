@@ -84,6 +84,17 @@ trait Table[H, V] {
   }
 
   /**
+   *  Adds a row to the Table.
+   *  The Table will change into a {{MapTable}} but that shouldn't make a difference
+   * as it still is a Table.
+   *  @param row The row to be added.
+   *
+   *  Note: The types could probably be relaxed as any subtype of H and V
+   * should be OK to be added.
+   */
+  def +[VB <: V](row: Map[H, VB]): Table[H, V] = new MapTable(this.mapRows) + row
+
+  /**
    *  Adds all the elements of another table to this table.
    * The joined Table will have the fields of this first followed by the additional
    * fields from the joined table.

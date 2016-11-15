@@ -49,6 +49,16 @@ class TestTable extends FunSpec with Matchers with GivenWhenThen {
       Then("The last 3 columns of the last 11 rows of the joined table should be equal to the rows of the second table")
       joined.rows.map(_.drop(1)).drop(11) should equal(rows2)
     }
+    it("should add a new row when a new map is addeed and add the new headers at the end") {
+      val row1 = Map("A" -> "A1", "B" -> "B1", "C" -> "C1")
+      val new_row = Map("A" -> "AN", "C" -> "CN", "D" -> "DN")
+      val table = new MapTable(List(row1))
+      val new_table = table + new_row
+
+      new_table.mapRows(0) should be(row1)
+      new_table.mapRows(1) should be(new_row)
+      new_table.headers should be(List("A", "B", "C", "D"))
+    }
   }
 
 }

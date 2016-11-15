@@ -2,18 +2,20 @@ package com.schmueckers.jstools
 
 import scala.collection.mutable.SetBuilder
 
-/** A implementation of [[Table]] which takes a list of rows as constructor
-  *
-  * @param map_rows The rows of the table as map
-  * @param o_headers An optional sequence of headers that will be used. If this parameters is not
-  * provided, the random order of the joined set of all the keys of the rows will be used.
-  */
+/**
+ * A implementation of [[Table]] which takes a list of rows as constructor
+ *
+ * @param map_rows The rows of the table as map
+ * @param o_headers An optional sequence of headers that will be used. If this parameters is not
+ * provided, the random order of the joined set of all the keys of the rows will be used.
+ */
 class MapTable[K, V](val map_rows: Iterable[Map[K, V]], o_headers: Option[Seq[K]] = None) extends Table[K, V] {
-  /** A constructor with a Seq that defines the headers. Convenience to make
-    * creating MapTables with given headers easier.
-    */
+  /**
+   * A constructor with a Seq that defines the headers. Convenience to make
+   * creating MapTables with given headers easier.
+   */
   def this(map_rows: Iterable[Map[K, V]], headers: Seq[K]) = this(map_rows, headers match {
-    case Nil     => None
+    case Nil => None
     case headers => Some(headers)
   })
 
@@ -22,8 +24,9 @@ class MapTable[K, V](val map_rows: Iterable[Map[K, V]], o_headers: Option[Seq[K]
 
   def rows: Seq[Seq[Option[V]]] = map_rows.map(row_to_seq).toSeq
 
-  /** Returns a [[Seq]] of all the key values in the input Maps
-    */
+  /**
+   * Returns a [[Seq]] of all the key values in the input Maps
+   */
   lazy val headers: Seq[K] =
     o_headers.getOrElse {
       val all_keys = map_rows.toStream.flatMap(_.keys)
@@ -32,4 +35,14 @@ class MapTable[K, V](val map_rows: Iterable[Map[K, V]], o_headers: Option[Seq[K]
       val result = sb.result
       result.toSeq
     }
+
+  /**
+   * Returns a new [[com.schmueckers.jstools.Table]] which contains the parameter
+   * `row` as the last row of the table.
+   *
+   * If `this` has defined headers then the headers are kept. Otherwise, the keys from the
+   * new row will be added to the key collection. This might result in a change of order for
+   * the existing keys.
+   */
+  def +(row: Map[K, V]) = new MapTable(map_rows.toBuffer += row, o_headers)
 }
