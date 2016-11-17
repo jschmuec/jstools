@@ -5,6 +5,7 @@ version := "0.5-SNAPSHOT"
 organization := "com.schmueckers"
 
 scalaVersion := "2.11.8"
+scalaVersion in ThisBuild := "2.11.8"
 
 scalacOptions += "-target:jvm-1.7"
 

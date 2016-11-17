@@ -33,6 +33,9 @@ class CSVFile(fileName: String,
               quote: Char = '"',
               escape: Char = '\\') extends Traversable[Array[String]] {
 
+  /**
+   * The key method to be implemented so that Traversable does the rest
+   */
   override def foreach[U](f: Array[String] => U): Unit = {
     val csvReader = new CSVReader(new InputStreamReader(new FileInputStream(fileName), charset), separator, quote, escape)
     try {
