@@ -24,7 +24,7 @@ package object HTMLHelpers {
      * will actually result in the link being inserted in the document and not just the
      * above text.
      */
-    def toHtml(id: String = null) = {
+    def toHtml: scala.xml.Elem = {
       def v = <table>
                 <thead>
                   <tr>
@@ -45,10 +45,12 @@ package object HTMLHelpers {
                   }
                 </tbody>
               </table>
-      if (id == null)
-        v
-      else
-        v.copy(attributes = new scala.xml.UnprefixedAttribute("id", id, v.attributes))
+      v
+    }
+    def toHtml(id: String): scala.xml.Elem = {
+      def html = toHtml
+      html.copy(attributes =
+        new scala.xml.UnprefixedAttribute("id", id, html.attributes))
     }
   }
 
