@@ -4,6 +4,7 @@ package com.schmueckers.jstools
  * Defines various stuff that makes working with HTML easier
  */
 package object HTMLHelpers {
+
   /**
    * Defines a method [[#toHtml]] that translates a table into an HTML table
    */
@@ -12,12 +13,8 @@ package object HTMLHelpers {
       case s: String => scala.xml.Unparsed(s)
       case default => default
     }
-
     /**
      * Exports a [[Table]] as an HTML Table
-     *
-     * @param id Optional paramenter (null if empty) that can be used to set an
-     * id on the table.
      *
      * If the table contains string values, these will be included Unparsed in the
      * text. In particular this means that a field with the content "<a href=.."
@@ -47,6 +44,13 @@ package object HTMLHelpers {
               </table>
       v
     }
+
+    /**
+     *  Exports this as an HTML table with an id
+     *
+     * @param id Optional paramenter (null if empty) that can be used to set an
+     * id on the table.
+     */
     def toHtml(id: String): scala.xml.Elem = {
       def html = toHtml
       html.copy(attributes =
@@ -59,4 +63,12 @@ package object HTMLHelpers {
    */
   def escape_amp(s: String) =
     "&(?!.{1,4};)".r.replaceAllIn(s, "&amp;")
+
+  implicit class ElemExtension(elem: scala.xml.Elem) {
+    /**
+     * Adds an attribute to an [[scala.xml.Elem]]
+     */
+    def add_attribute(key: String, value: String): scala.xml.Elem =
+      elem.copy(attributes = new scala.xml.UnprefixedAttribute(key, value, elem.attributes))
+  }
 }

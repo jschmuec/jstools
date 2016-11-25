@@ -17,7 +17,8 @@ class TestHtmlHelpers extends FunSpec with Matchers with XmlMatcher {
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td>                                    <a href="abc">ABC</a>
+                                  <td>
+                                    <a href="abc">ABC</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -27,11 +28,21 @@ class TestHtmlHelpers extends FunSpec with Matchers with XmlMatcher {
 
   describe("html_escape_amp") {
     it("should replace & with &amp;") {
-      escape_amp("a&b") should be ("a&amp;b")
+      escape_amp("a&b") should be("a&amp;b")
     }
     it("should not replace &auml;") {
       val s = "a&auml;b"
-      escape_amp( s) should be (s)
+      escape_amp(s) should be(s)
+    }
+  }
+  describe("ElemExtensions") {
+    it("should add an attribute correctly") {
+      val e = <a/>
+      e.add_attribute("i", "1") should beXml(<a i="1"/>)
+    }
+    it("should allow to override an attribute~") {
+      val e = <a i="1"/>
+      e.add_attribute("i", "2") should beXml(<a i="2"/>)
     }
   }
 }
