@@ -3,7 +3,7 @@ package com.schmueckers.jstools.xml
 import org.scalatest.FunSpec
 import org.scalatest.Matchers
 import com.schmueckers.jstools._
-import HTMLHelpers._
+import com.schmueckers.jstools.HTMLHelpers._
 
 class TestHtmlHelpers extends FunSpec with Matchers with XmlMatcher {
   describe("toHtml") {
