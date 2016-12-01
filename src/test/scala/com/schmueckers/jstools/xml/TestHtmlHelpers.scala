@@ -8,7 +8,7 @@ import com.schmueckers.jstools.HTMLHelpers._
 class TestHtmlHelpers extends FunSpec with Matchers with XmlMatcher {
   describe("toHtml") {
     it("should leave HTML in fields untouched") {
-      val t = new SeqTable("f" :: Nil, List(List(Some("<a href=\"abc\">ABC</a>"))))
+      val t = Table("f" :: Nil, List(List(Some("<a href=\"abc\">ABC</a>"))))
       t.toHtml should beXml(<table>
                               <thead>
                                 <tr>

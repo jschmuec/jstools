@@ -1,33 +1,29 @@
 package com.schmueckers.jstools
 
-/**
- * A definition of a table
- *
- * H : Type of the headers
- * V : Type of the Values
- *
- * There are many different ways to look at the information in a table. This is just
- * one very simple and abstract version which in turn allows to access the data in
- * more sophisticated ways.
- */
+/** A definition of a table
+  *
+  * H : Type of the headers
+  * V : Type of the Values
+  *
+  * There are many different ways to look at the information in a table. This is just
+  * one very simple and abstract version which in turn allows to access the data in
+  * more sophisticated ways.
+  */
 trait Table[H, V] {
   outer =>
-  /**
-   * A table has a [[Seq]] of headers
-   */
+  /** A table has a [[Seq]] of headers
+    */
   def headers: Seq[H]
 
-  /**
-   * A table has a [[scala.collection.Seq]] of rows. Not all columns have to be defined so each
-   * column value is an [[Option[V]]]
-   */
+  /** A table has a [[scala.collection.Seq]] of rows. Not all columns have to be defined so each
+    * column value is an [[Option[V]]]
+    */
   def rows: Seq[Seq[Option[V]]]
 
-  /**
-   * Returns a sub-table that only contains the fields that
-   * are defined in the [[fields]] parameter in the defined
-   * sequence
-   */
+  /** Returns a sub-table that only contains the fields that
+    * are defined in the [[fields]] parameter in the defined
+    * sequence
+    */
   def sub(fields: Seq[H]) = {
     val included_idx = fields.map(headers.indexOf(_))
     val filtered_rows = rows.map(r => included_idx.map(r(_)))
@@ -37,11 +33,10 @@ trait Table[H, V] {
     }
   }
 
-  /**
-   * Returns the table as a [[Stream]] of [[Map]]s
-   *
-   * This felt like a good idea at the time. Not sure we really need it.
-   */
+  /** Returns the table as a [[Stream]] of [[Map]]s
+    *
+    * This felt like a good idea at the time. Not sure we really need it.
+    */
   def mapRows: Stream[Map[H, V]] = {
 
     rows.toStream map rowToMap
@@ -53,10 +48,9 @@ trait Table[H, V] {
     Map((headers zipWithIndex): _*)
   }
 
-  /**
-   * Converts a [[scala.collection.Seq[Option[V]]] into a [[Map[H,V]]] without
-   * copying the data over into a Map
-   */
+  /** Converts a [[scala.collection.Seq[Option[V]]] into a [[Map[H,V]]] without
+    * copying the data over into a Map
+    */
   private def rowToMap(rowSeq: Seq[Option[V]]): Map[H, V] = new Map[H, V]() {
     val row_as_list = rowSeq.toList
     def get(key: H): Option[V] = colIdx.get(key) flatMap (row_as_list(_))
@@ -72,10 +66,9 @@ trait Table[H, V] {
   }
 
   def addColumn(header: H, values: Iterable[Option[V]]) =
-    new SeqTable(
+    Table(
       headers :+ header,
-      rows zip values map (x => x._1 :+ x._2)
-    )
+      rows zip values map (x => x._1 :+ x._2))
 
   private def join[K, X, VA <: X, VB <: X](a: Table[K, VA], b: Table[K, VB]): Table[K, X] = {
     val headers = a.headers ++ b.headers.filterNot(a.headers.contains(_))
@@ -83,24 +76,22 @@ trait Table[H, V] {
     new MapTable(rows, headers)
   }
 
-  /**
-   *  Adds a row to the Table.
-   *  The Table will change into a {{MapTable}} but that shouldn't make a difference
-   * as it still is a Table.
-   *  @param row The row to be added.
-   *
-   *  Note: The types could probably be relaxed as any subtype of H and V
-   * should be OK to be added.
-   */
+  /** Adds a row to the Table.
+    * The Table will change into a {{MapTable}} but that shouldn't make a difference
+    * as it still is a Table.
+    * @param row The row to be added.
+    *
+    * Note: The types could probably be relaxed as any subtype of H and V
+    * should be OK to be added.
+    */
   def +[VB <: V](row: Map[H, VB]): Table[H, V] = new MapTable(this.mapRows) + row
 
-  /**
-   *  Adds all the elements of another table to this table.
-   * The joined Table will have the fields of this first followed by the additional
-   * fields from the joined table.
-   *
-   * The implementation uses a helper method join because I couldn't get the ctypes toiteratorwork.
-   */
+  /** Adds all the elements of another table to this table.
+    * The joined Table will have the fields of this first followed by the additional
+    * fields from the joined table.
+    *
+    * The implementation uses a helper method join because I couldn't get the ctypes toiteratorwork.
+    */
   def ++[VJ >: V, VB <: VJ](b: Table[H, VB]): Table[H, VJ] = join(this, b)
 
   override def toString: String = {
@@ -110,7 +101,11 @@ trait Table[H, V] {
   }
 }
 
-/**
- * A simple [[Seq]]-based implementaiton of [[Table]]
- */
-class SeqTable[H, V](val headers: Seq[H], val rows: Seq[Seq[Option[V]]]) extends Table[H, V]
+object Table {
+  def apply[H, V](hs: Seq[H], rs: Seq[Seq[Option[V]]]): Table[H, V] = new Table[H, V] {
+    def headers = hs
+    def rows = rs
+  }
+  def apply[H, V](maps: Iterable[Map[H, V]], headers: Option[Seq[H]] = None): Table[H, V] =
+    new MapTable(maps, headers)
+}

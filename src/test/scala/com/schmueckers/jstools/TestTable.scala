@@ -18,7 +18,7 @@ class TestTable extends FunSpec with Matchers with GivenWhenThen {
     val join = (c: Char, i: Int) => s"$c-$i"
 
     it("Should allow to add a column") {
-      val table = new SeqTable(keys, generate_rows(keys, 0 to 10, join))
+      val table = Table(keys, generate_rows(keys, 0 to 10, join))
       val newTable = table.addColumn('D', (0 to 10).map(i => Some(join('D', i))))
 
       newTable.headers should be('A' to 'D')
@@ -33,9 +33,9 @@ class TestTable extends FunSpec with Matchers with GivenWhenThen {
       val rows2 = generate_rows(keys2, 11 to 20, join)
 
       Given(s"A table with columns ${keys1}")
-      val table1 = new SeqTable(keys1, rows1)
+      val table1 = Table(keys1, rows1)
       Given(s"Another table with columns ${keys2}")
-      val table2 = new SeqTable(keys2, rows2)
+      val table2 = Table(keys2, rows2)
 
       When("Joining these tables")
       val joined = table1 ++ table2
