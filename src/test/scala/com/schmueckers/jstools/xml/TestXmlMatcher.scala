@@ -8,6 +8,7 @@ import scala.xml.Elem
 import scala.xml.Text
 import org.scalatest.matchers.MatchResult
 import org.scalatest.Inside
+import com.schmueckers.jstools.xml.XmlMatcher
 
 class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
   describe("The matcher") {

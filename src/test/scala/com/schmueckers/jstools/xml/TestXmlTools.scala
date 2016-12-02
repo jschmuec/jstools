@@ -7,6 +7,8 @@ import scala.xml.Node
 import scala.xml.Elem
 import scala.xml.Text
 import scala.xml.Unparsed
+import com.schmueckers.jstools.xml.XmlMatcher
+import com.schmueckers.jstools.xml.XmlCompare
 
 class TestXmlTools extends FunSpec with GivenWhenThen with Matchers with XmlCompare with XmlMatcher {
 

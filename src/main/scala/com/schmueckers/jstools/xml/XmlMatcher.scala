@@ -1,74 +1,71 @@
 package com.schmueckers.jstools.xml
 
 import org.scalatest._
-import matchers._
+import org.scalatest.matchers._
 import scala.xml.Node
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
 
-/**
- * A Custom Matcher implementation for scalatest that allows easy comparison of XML.
- *
- * Usage:
- *
- * {{{
- * class TestSometing with XmlMatcher {
- * 	<a></a> should beXml(<a></a>)
- * }
- * }}}
- *
- * or
- * {{{
- * import com.schmueckers.tools.xml.XmlMatcher._
- *
- * class TestSomething {
- * 	<a></a> should beXml(<a></a>)
- * }
- * }}}
- *
- * The following test creates the outputs
- * {{{
- * class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
- * describe("The matcher") {
- * it("should fail") {
- * <a><b><c>CCC</c></b></a> should beXml(<a><b>1</b></a>)
- * }
- * }
- * }}}
- *
+/** A Custom Matcher implementation for scalatest that allows easy comparison of XML.
+  *
+  * Usage:
+  *
+  * {{{
+  * class TestSometing with XmlMatcher {
+  * 	<a></a> should beXml(<a></a>)
+  * }
+  * }}}
+  *
+  * or
+  * {{{
+  * import com.schmueckers.tools.xml.XmlMatcher._
+  *
+  * class TestSomething {
+  * 	<a></a> should beXml(<a></a>)
+  * }
+  * }}}
+  *
+  * The following test creates the outputs
+  * {{{
+  * class TestXmlMatcher extends FunSpec with Matchers with XmlMatcher with Inside {
+  * describe("The matcher") {
+  * it("should fail") {
+  * <a><b><c>CCC</c></b></a> should beXml(<a><b>1</b></a>)
+  * }
+  * }
+  * }}}
+  *
   * <cdata>
- * [Info] The matcher
- * [info] - shoudl work
- * [info] - should not match *** FAILED ***
- * [info]   <a>                                      == <a>
- * [info]   <b>1</b>                                 !=
- * [info]                                            != <b>
- * [info]                                            != <c>CCC</c>
- * [info]                                            != </b>
- * [info]   </a>                                     == </a> (TestXmlMatcher.scala:20)
- * </cdata>
- *
- */
+  * [Info] The matcher
+  * [info] - shoudl work
+  * [info] - should not match *** FAILED ***
+  * [info]   <a>                                      == <a>
+  * [info]   <b>1</b>                                 !=
+  * [info]                                            != <b>
+  * [info]                                            != <c>CCC</c>
+  * [info]                                            != </b>
+  * [info]   </a>                                     == </a> (TestXmlMatcher.scala:20)
+  * </cdata>
+  *
+  */
 trait XmlMatcher extends XmlCompare {
 
-  /**
-   *  Matcher for XML that outputs formatted comparison
-   *
-   * @param padding defines how wide the printed XML will be formatted to
-   *
-   * After looking at libraries out there which did much smarter stuff I
-   * decided to implement a very simple diff algo on the XML in formatted form.
-   * The algo has O(N*N) if I'm not wrong, so don't run it on massive data
-   * sets.
-   *
-   */
+  /** Matcher for XML that outputs formatted comparison
+    *
+    * @param padding defines how wide the printed XML will be formatted to
+    *
+    * After looking at libraries out there which did much smarter stuff I
+    * decided to implement a very simple diff algo on the XML in formatted form.
+    * The algo has O(N*N) if I'm not wrong, so don't run it on massive data
+    * sets.
+    *
+    */
   class XmlMatcher(expected: Node, padding: Int = 40) extends Matcher[Node] {
 
     def apply(actual: Node) = {
-      /**
-       * Normalize the XML to remove Unparsed elements
-       */
+      /** Normalize the XML to remove Unparsed elements
+        */
       def normalize(n: Node) =
         scala.xml.XML.loadString(n.buildString(false))
 
@@ -80,8 +77,8 @@ trait XmlMatcher extends XmlCompare {
         case Nil => a.zipAll(e, "", "")
         case h :: t => e.indexOf(h) match {
           case -1 => (h, "") :: diff(t, e)
-          case 0 => (h, e(0)) :: diff(t, e.drop(1))
-          case i => e.take(i).map(a => ("", a)) ++ ((h, e(i)) :: diff(t, e.drop(i + 1)))
+          case 0  => (h, e(0)) :: diff(t, e.drop(1))
+          case i  => e.take(i).map(a => ("", a)) ++ ((h, e(i)) :: diff(t, e.drop(i + 1)))
         }
       }
 
@@ -97,17 +94,15 @@ trait XmlMatcher extends XmlCompare {
       MatchResult(
         z.forall(ab => ab._1 == ab._2),
         z.map(combine).mkString("\n"),
-        z.map(combine).mkString("\n")
-      )
+        z.map(combine).mkString("\n"))
     }
   }
 
-  /**
-   * The comparison method.
-   *
-   * I couldn't figure out how to override the be method. Maybe somebody can
-   * explain this to me.
-   */
+  /** The comparison method.
+    *
+    * I couldn't figure out how to override the be method. Maybe somebody can
+    * explain this to me.
+    */
   def beXml(expected: Node) = new XmlMatcher(expected)
 }
 
