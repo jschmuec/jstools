@@ -102,10 +102,23 @@ trait Table[H, V] {
 }
 
 object Table {
+  /** Creates a [[Table]] from rows that are sequences of keys and option field values
+    */
   def apply[H, V](hs: Seq[H], rs: Seq[Seq[Option[V]]]): Table[H, V] = new Table[H, V] {
     def headers = hs
     def rows = rs
   }
-  def apply[H, V](maps: Iterable[Map[H, V]], headers: Option[Seq[H]] = None): Table[H, V] =
+  /** Create a [[Table]] from rows that are provided as maps.
+    *
+    * @headers: An optional sequence of headers that defines the order of columns for this table
+    */
+  def apply[H, V](maps: Iterable[Map[H, V]], headers: Option[Seq[H]] ): Table[H, V] =
     new MapTable(maps, headers)
+
+  def apply[H, V](maps: Iterable[Map[H, V]], headers: Seq[H] ): Table[H, V] =
+    new MapTable(maps, Some(headers))
+
+  def apply[H, V](maps: Iterable[Map[H, V]] ): Table[H, V] =
+    new MapTable(maps, None )
 }
+
