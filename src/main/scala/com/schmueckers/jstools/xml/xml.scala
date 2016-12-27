@@ -70,4 +70,53 @@ package object xml {
       r._1
     }
   }
+  /** Retrieve an attribute of an [[scala.xml.Node]] as a String
+    *
+    * Convenience method as we would have otherwise to retrieve the
+    * head of a [[scala.xml.NodeSeq]] and ...
+    *
+    * Note: This class assumes that there is only value ever in
+    * the attribute. This might be incorrect. I would then assume
+    * that the function throws an exception if there are more than
+    * 1 value
+    *
+    * You can use the [[#\@]] method to filter on an attribute value
+    */
+  def getAttributeAsString(tag: String)(node: Node) =
+    node.attributes.get(tag) map { texts => texts.head.text }
+
+  /** An extension to the functions available on [[scala.xml.Node]]
+    */
+  implicit class NodeExtentions(node: Node) {
+    /** Returns an option of the attribute value as String of a given node
+      */
+    def attr(tag: String): Option[String] = getAttributeAsString(tag)(node)
+
+    /** returns all the nodes that have an attribute that has the value given
+      * as the second parameter
+      */
+    def \\@(kvp: (String, String)): NodeSeq = node \\ "_" filter (_.attr(kvp._1).map(_ == kvp._2).getOrElse(false))
+    trait HasIs {
+      def is(v: String): NodeSeq
+    }
+
+    /** Finds all the elements that have an attribute '''k''' that have a value
+      * '''v'''.
+      *
+      * Use as follows:
+      * {{{
+      * [scala> val x = <a>
+      * <n id="1">First</n>
+      * <n id="2">Nope</n>
+      * <n id="1">Second</n>
+      * </a>
+      * x: scala.xml.Elem = <a><n id="1"/><n id="1"/></a>
+      *
+      * [scala> x where "id" is "1"
+      * NodeSeq( <n id="1">First</n>, <n id="1">Second</n> )
+      */
+    def where(k: String) = new HasIs {
+      def is(value: String) = (node \\ "_" filter (_.attr(k).map(_ == value).getOrElse(false)))
+    }
+  }
 }

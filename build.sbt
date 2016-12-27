@@ -1,6 +1,6 @@
 name := "JS Tools"
 
-version := "0.7.0-SNAPSHOT"
+version := "0.7.1-SNAPSHOT"
 
 organization := "com.schmueckers"
 
@@ -23,7 +23,7 @@ libraryDependencies := {
     case Some((2, scalaMajor)) if scalaMajor >= 11 =>
       libraryDependencies.value ++ Seq(
         "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
-        "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
+        "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
         "org.scala-lang.modules" %% "scala-swing" % "1.0.1")
     case _ =>
       // or just libraryDependencies.value if you don't depend on scala-swing
@@ -33,6 +33,6 @@ libraryDependencies := {
 
 //libraryDependencies += "com.sksamuel.elastic4s" % "elastic4s-core_2.11" % "2.1.2" withSources()
 
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0-RC4"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0-RC4"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0"
 
