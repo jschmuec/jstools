@@ -5,12 +5,14 @@ version := "0.7.1-SNAPSHOT"
 organization := "com.schmueckers"
 
 scalaVersion := "2.11.8"
+
 scalaVersion in ThisBuild := "2.11.8"
 
 scalacOptions += "-target:jvm-1.7"
 
-EclipseKeys.eclipseOutput := Some(".target")
-EclipseKeys.withSource := true
+//EclipseKeys.eclipseOutput := Some(".target")
+
+//EclipseKeys.withSource := true
 
 libraryDependencies += "com.opencsv" % "opencsv" % "3.8"
 
@@ -34,5 +36,6 @@ libraryDependencies := {
 //libraryDependencies += "com.sksamuel.elastic4s" % "elastic4s-core_2.11" % "2.1.2" withSources()
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0"
 

@@ -108,6 +108,21 @@ object Table {
     def headers = hs
     def rows = rs
   }
+
+  /**
+    * Creates a [[Table]] from Complete data
+    *
+    * @param hs Header values
+    * @param rs Data values without missing data
+    * @tparam H Data type for the headers or keys
+    * @tparam V Data type of the values
+    * @return a [[Table[]] that contains all the data
+    */
+  def fromComplete[H,V]( hs : Seq[H], rs : Seq[Seq[V]] ) : Table[H,V] = {
+    val options : Seq[Seq[Option[V]]] = rs.map( _.map( Some(_) ) )
+    apply( hs, options)
+  }
+
   /** Create a [[Table]] from rows that are provided as maps.
     *
     * @headers: An optional sequence of headers that defines the order of columns for this table
