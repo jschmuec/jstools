@@ -21,7 +21,7 @@ trait Table[H, V] {
   def rows: Seq[Seq[Option[V]]]
 
   /** Returns a sub-table that only contains the fields that
-    * are defined in the [[fields]] parameter in the defined
+    * are defined in the fields parameter in the defined
     * sequence
     */
   def sub(fields: Seq[H]) = {
@@ -42,10 +42,10 @@ trait Table[H, V] {
     rows.toStream map rowToMap
   }
 
-  val colIdx = {
+  val colIdx: Map[Any, Int] = {
     import scala.language.postfixOps
 
-    Map((headers zipWithIndex): _*)
+    Map(headers zipWithIndex: _*)
   }
 
   /** Converts a [[scala.collection.Seq[Option[V]]] into a [[Map[H,V]]] without
@@ -54,7 +54,7 @@ trait Table[H, V] {
   private def rowToMap(rowSeq: Seq[Option[V]]): Map[H, V] = new Map[H, V]() {
     val row_as_list = rowSeq.toList
     def get(key: H): Option[V] = colIdx.get(key) flatMap (row_as_list(_))
-    def elements = (headers zip rowSeq).filter(_._2 != None).map(x => (x._1, x._2.get))
+    def elements = (headers zip rowSeq).filter(_._2.isDefined).map(x => (x._1, x._2.get))
     def iterator: Iterator[(H, V)] = elements.toIterator
     def +[V1 >: V](kv: (H, V1)): Map[H, V1] = Map(elements: _*) + kv
     def -(key: H) = Map(elements: _*) - key
@@ -119,13 +119,15 @@ object Table {
     * @return a [[Table[]] that contains all the data
     */
   def fromComplete[H,V]( hs : Seq[H], rs : Seq[Seq[V]] ) : Table[H,V] = {
+    assert( rs.forall( sv  => sv.size == hs.size ) )
     val options : Seq[Seq[Option[V]]] = rs.map( _.map( Some(_) ) )
     apply( hs, options)
   }
 
   /** Create a [[Table]] from rows that are provided as maps.
     *
-    * @headers: An optional sequence of headers that defines the order of columns for this table
+    * @param maps The maps that define the rows
+    * @param headers An optional sequence of headers that defines the order of columns for this table
     */
   def apply[H, V](maps: Iterable[Map[H, V]], headers: Option[Seq[H]] ): Table[H, V] =
     new MapTable(maps, headers)
@@ -135,5 +137,7 @@ object Table {
 
   def apply[H, V](maps: Iterable[Map[H, V]] ): Table[H, V] =
     new MapTable(maps, None )
+
+  def empty[H,V] =  this.apply[H,V]( Nil)
 }
 

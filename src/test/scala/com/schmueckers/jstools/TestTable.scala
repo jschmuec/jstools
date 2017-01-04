@@ -59,6 +59,13 @@ class TestTable extends FunSpec with Matchers with GivenWhenThen {
       new_table.mapRows(1) should be(new_row)
       new_table.headers should be(List("A", "B", "C", "D"))
     }
+    it("should fail if I try to call fromComplete with incorrect number of columns in the data") {
+      assertThrows[AssertionError] {
+        Table.fromComplete( "a" :: "b" :: Nil, List( "A" :: "B" :: Nil, "A2" :: Nil ) )
+      }
+    }
+    it("should create a correct table given complete data using Table.fromComplete") {
+      Table.fromComplete( "a" :: "b" :: Nil, List( "A1" :: "B1" :: Nil, "A2" :: "B2" :: Nil ))
+    }
   }
-
 }
