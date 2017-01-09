@@ -12,11 +12,11 @@ class TestMapTable extends FunSpec with Matchers {
     def keys_to_map(keys: Iterable[String]) = keys.zip(keys).toMap
     val subset_maps = keys.subsets().toList.map(keys_to_map)
 
-    val subset_table = new MapTable(subset_maps)
+    val subset_table = Table(subset_maps)
 
     it("should return the right number of rows") {
       val count = 5
-      val mp = new MapTable((1 to count).map(x => Map("A" -> 1, "B" -> 2)))
+      val mp = Table((1 to count).map(x => Map("A" -> 1, "B" -> 2)))
       mp.rows.size should be(5)
     }
     it("The keys should be the join over all keys") {
