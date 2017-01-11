@@ -96,8 +96,10 @@ trait Table[H, V] {
 
   override def toString: String = {
     def noneToNA(o: Option[V]): Any = o.getOrElse("#N/A")
-    val asList = headers :: rows.map(_.map(noneToNA)).toList
+    mapRows.mkString("\n")
+    /*val asList = headers :: rows.map(_.map(noneToNA)).toList
     asList.map(_.toString).mkString("\n")
+    */
   }
 }
 
