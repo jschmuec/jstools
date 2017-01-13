@@ -63,4 +63,6 @@ package object files {
   }
 
   def copyRecursive(from: Path, to: Path) = FileTreeWalker.copyRecursive(from, to)
+
+  def deleteRecursive( from : Path ) = FileTreeWalker.deleteRecursive( from )
 }

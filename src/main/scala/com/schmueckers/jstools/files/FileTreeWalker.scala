@@ -64,7 +64,7 @@ object FileTreeWalker {
     * @param from
     * @param to
     */
-  def copyRecursive( from : Path, to : Path ) {
+  def copyRecursive( from : Path, to : Path ) = {
     new FileTreeWalker(from).foreach {
       case PreVisitDirectory(dir, atts) =>
         try {
@@ -79,6 +79,14 @@ object FileTreeWalker {
       case VisitFile(file, attrs) => java.nio.file.Files.copy(file,
         to.resolve(from.relativize(file)), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
       case VisitFileFailed(file, exc) => ""
+    }
+  }
+
+  def deleteRecursive( from : Path ) = {
+    FileTreeWalker( from ) foreach {
+      case VisitFile( f, atts ) => java.nio.file.Files.delete( f )
+      case PostVisitDirectory( d, exc ) => java.nio.file.Files.delete( d )
+      case _ => Unit
     }
   }
 }
