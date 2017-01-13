@@ -1,8 +1,7 @@
 package com.schmueckers.jstools
 
 import java.io.File
-import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.{FileSystems, FileVisitResult, Path, SimpleFileVisitor}
+import java.nio.file.{FileSystems, Path}
 
 import scala.language.implicitConversions
 
