@@ -61,6 +61,7 @@ package object files {
 }
 
 package files {
+  //TODO refactor to use the new one
   class FileTreeWalker(val path: Path) extends Traversable[Path] {
     override def foreach[U](f: (Path) => U) = {
       java.nio.file.Files.walkFileTree(path, new SimpleFileVisitor[Path]() {
