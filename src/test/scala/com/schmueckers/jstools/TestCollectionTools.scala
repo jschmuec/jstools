@@ -21,4 +21,5 @@ class TestCollectionTools extends FunSpec with Matchers {
       iterable.reverse.size should be(0)
     }
   }
+
 }
