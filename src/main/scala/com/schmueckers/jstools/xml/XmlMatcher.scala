@@ -134,7 +134,7 @@ trait XmlCompare {
   def compare(expected: Node, actual: Node): Option[Throwable] = {
     case class MatchException(expected: Node, found: Node) extends Exception("not needed")
 
-    def recurse(actual: xml.Node, expected: xml.Node) {
+    def recurse(actual: xml.Node, expected: xml.Node) : Unit = {
       // depth-first checks, to get specific failures
       for ((actualChild, expectedChild) <- actual.child zip expected.child) {
         recurse(actualChild, expectedChild)

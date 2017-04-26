@@ -1,7 +1,5 @@
 package com.schmueckers.jstools
 
-import scala.collection.mutable.MapBuilder
-
 object CollectionTools {
   implicit class MapContains[K, V](m: Map[K, V]) {
     def contains(kvp: (K, V)) = m.get(kvp._1) match {
