@@ -1,6 +1,6 @@
 name := "JS Tools"
 
-version := "0.8.0-SNAPSHOT"
+version := "0.8.0"
 
 organization := "com.schmueckers"
 
