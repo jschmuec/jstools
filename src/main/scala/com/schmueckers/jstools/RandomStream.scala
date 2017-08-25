@@ -10,11 +10,15 @@ import java.util.Random
   */
 object RandomStream {
   /**
+    * Returns a stream of random numbers
+    *
     * A function which actually repeatedly calls the method passed
     * in on the random number generator and thereby creates a stream
     * of random elements of the given type. In practice use the Int()
     * and Int( bound : Int ) methods to get a stream of the right
     * type.
+    *
+    * Do not hold the head of the stream as this would stop the GC.
     *
     * @param f The function on java.util.Random that should be invoked to pull
     *          the next element out of the generator
