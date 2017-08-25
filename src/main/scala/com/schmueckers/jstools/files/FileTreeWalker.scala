@@ -30,27 +30,25 @@ class FileTreeWalker(from: Path) extends Traversable[FileVisitEvent] {
     FileVisitResult.CONTINUE
   }
 
-  override def foreach[U](f: (FileVisitEvent) => U): Unit = {
+  override def foreach[U](f: (FileVisitEvent) => U): Unit =
+    walk((fve: FileVisitEvent) => {
+      f(fve)
+      FileVisitResult.CONTINUE
+    })
+
+  def walk(f: (FileVisitEvent) => FileVisitResult) = {
     Files.walkFileTree(from, new SimpleFileVisitor[Path] {
-      override def preVisitDirectory(dir: Path, atts: BasicFileAttributes): FileVisitResult =
-        wrapper {
-          f(PreVisitDirectory(dir, atts))
-        }
+      override def preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult =
+        f(PreVisitDirectory(dir, attrs))
 
       override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult =
-        wrapper {
-          f(PostVisitDirectory(dir, exc))
-        }
+        f(PostVisitDirectory(dir, exc))
 
       override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult =
-        wrapper {
-          f(VisitFile(file, attrs))
-        }
+        f(VisitFile(file, attrs))
 
       override def visitFileFailed(file: Path, exc: IOException): FileVisitResult =
-        wrapper {
-          f(VisitFileFailed(file, exc))
-        }
+        f(VisitFileFailed(file, exc))
     })
   }
 }
@@ -64,7 +62,7 @@ object FileTreeWalker {
     * @param from
     * @param to
     */
-  def copyRecursive( from : Path, to : Path ) = {
+  def copyRecursive(from: Path, to: Path) = {
     new FileTreeWalker(from).foreach {
       case PreVisitDirectory(dir, atts) =>
         try {
@@ -82,10 +80,10 @@ object FileTreeWalker {
     }
   }
 
-  def deleteRecursive( from : Path ) = {
-    FileTreeWalker( from ) foreach {
-      case VisitFile( f, atts ) => java.nio.file.Files.delete( f )
-      case PostVisitDirectory( d, exc ) => java.nio.file.Files.delete( d )
+  def deleteRecursive(from: Path) = {
+    FileTreeWalker(from) foreach {
+      case VisitFile(f, atts) => java.nio.file.Files.delete(f)
+      case PostVisitDirectory(d, exc) => java.nio.file.Files.delete(d)
       case _ => Unit
     }
   }
