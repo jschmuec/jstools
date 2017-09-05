@@ -25,10 +25,6 @@ case class VisitFileFailed(file: Path, exc: IOException) extends FileVisitEvent
   * @param from
   */
 class FileTreeWalker(from: Path) extends Traversable[FileVisitEvent] {
-  def wrapper(x: => Unit): FileVisitResult = {
-    x
-    FileVisitResult.CONTINUE
-  }
 
   override def foreach[U](f: (FileVisitEvent) => U): Unit =
     walk((fve: FileVisitEvent) => {
@@ -51,6 +47,30 @@ class FileTreeWalker(from: Path) extends Traversable[FileVisitEvent] {
         f(VisitFileFailed(file, exc))
     })
   }
+
+  /**
+    * Runs through the tree and can filter out subtrees
+    *
+    * @param dirFilter A function that has to return true if children of directory
+    *                  should be included
+    * @return A Traversable that allows all the usual iterations
+    */
+  def filterSubTrees(dirFilter: (Path, BasicFileAttributes) => Boolean) = {
+    new Traversable[FileVisitEvent] {
+      override def foreach[U](f: (FileVisitEvent) => U): Unit =
+        FileTreeWalker.this.walk(
+          (fve: FileVisitEvent) => {
+            f(fve)
+            fve match {
+              case PreVisitDirectory( path, attrs ) if dirFilter(path,attrs) =>
+                FileVisitResult.SKIP_SUBTREE
+              case _ =>
+                FileVisitResult.CONTINUE
+            }
+          }
+        )
+    }
+  }
 }
 
 object FileTreeWalker {
@@ -58,9 +78,6 @@ object FileTreeWalker {
 
   /**
     * Recursivley copies a directory
-    *
-    * @param from
-    * @param to
     */
   def copyRecursive(from: Path, to: Path) = {
     new FileTreeWalker(from).foreach {
